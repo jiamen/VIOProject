@@ -1,0 +1,17 @@
+/home/zlc/CLion/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/zlc/VIOFiles/03_MyCurveFitting_LM
+OPENMP FOUND
+-- Configuring done
+CMake Error at backend/CMakeLists.txt:1 (add_library):
+  Cannot find source file:
+
+    edge.cpp
+
+  Tried extensions .c .C .c++ .cc .cpp .cxx .cu .m .M .mm .h .hh .h++ .hm
+  .hpp .hxx .in .txx
+
+
+CMake Error at backend/CMakeLists.txt:1 (add_library):
+  No SOURCES given to target: 03_MyCurveFitting_LM_backend
+
+
+CMake Generate step failed.  Build files cannot be regenerated correctly.
