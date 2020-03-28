@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -std=c++11 -O3 -Wall -g  -shared -Wl,-soname,libcamera_model.so -o ../bin/libcamera_model.so CMakeFiles/camera_model.dir/src/camera_models/chessboard/Chessboard.cpp.o 

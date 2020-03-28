@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="JMVIO"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\SLAMDep\;CMake Files\..\SLAMDep\eigen3.3.7\;CMake Files\..\SLAMDep\eigen3.3.7\build\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\usr\;CMake Files\..\..\..\usr\local\;CMake Files\..\..\..\usr\local\lib\;CMake Files\..\..\..\usr\local\lib\cmake\;CMake Files\..\..\..\usr\local\lib\cmake\Ceres\;CMake Files\..\..\..\usr\local\lib\cmake\Pangolin\;CMake Files\..\..\..\usr\local\share\;CMake Files\..\..\..\usr\local\share\OpenCV\;CMake Files\..\..\..\usr\lib\;CMake Files\..\..\..\usr\lib\x86_64-linux-gnu\;CMake Files\..\..\..\usr\lib\x86_64-linux-gnu\cmake\;CMake Files\..\..\..\usr\lib\x86_64-linux-gnu\cmake\gflags\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/zlc/VINS/build"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/zlc/VINS/build"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="testCurveFitting">
+				<Option output="/home/zlc/VINS/bin/testCurveFitting" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/zlc/VINS/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DGFLAGS_IS_A_DLL=0"/>
+					<Add directory="/home/zlc/VINS/include"/>
+					<Add directory="/home/zlc/include/eigen3"/>
+					<Add directory="/usr/local/lib/cmake/Pangolin/../../../include"/>
+					<Add directory="/usr/local/include/eigen3"/>
+					<Add directory="/usr/local/include/opencv"/>
+					<Add directory="/home/zlc/SLAMDep/eigen3.3.7"/>
+					<Add directory="/usr/include/c++/7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
+					<Add directory="/usr/include/c++/7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 testCurveFitting"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="testCurveFitting/fast">
+				<Option output="/home/zlc/VINS/bin/testCurveFitting" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/zlc/VINS/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DGFLAGS_IS_A_DLL=0"/>
+					<Add directory="/home/zlc/VINS/include"/>
+					<Add directory="/home/zlc/include/eigen3"/>
+					<Add directory="/usr/local/lib/cmake/Pangolin/../../../include"/>
+					<Add directory="/usr/local/include/eigen3"/>
+					<Add directory="/usr/local/include/opencv"/>
+					<Add directory="/home/zlc/SLAMDep/eigen3.3.7"/>
+					<Add directory="/usr/include/c++/7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
+					<Add directory="/usr/include/c++/7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 testCurveFitting/fast"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="run_euroc">
+				<Option output="/home/zlc/VINS/bin/run_euroc" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/zlc/VINS/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DGFLAGS_IS_A_DLL=0"/>
+					<Add directory="/home/zlc/VINS/include"/>
+					<Add directory="/home/zlc/include/eigen3"/>
+					<Add directory="/usr/local/lib/cmake/Pangolin/../../../include"/>
+					<Add directory="/usr/local/include/eigen3"/>
+					<Add directory="/usr/local/include/opencv"/>
+					<Add directory="/home/zlc/SLAMDep/eigen3.3.7"/>
+					<Add directory="/usr/include/c++/7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
+					<Add directory="/usr/include/c++/7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 run_euroc"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="run_euroc/fast">
+				<Option output="/home/zlc/VINS/bin/run_euroc" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/zlc/VINS/bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DGFLAGS_IS_A_DLL=0"/>
+					<Add directory="/home/zlc/VINS/include"/>
+					<Add directory="/home/zlc/include/eigen3"/>
+					<Add directory="/usr/local/lib/cmake/Pangolin/../../../include"/>
+					<Add directory="/usr/local/include/eigen3"/>
+					<Add directory="/usr/local/include/opencv"/>
+					<Add directory="/home/zlc/SLAMDep/eigen3.3.7"/>
+					<Add directory="/usr/include/c++/7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
+					<Add directory="/usr/include/c++/7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 run_euroc/fast"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="camera_model">
+				<Option output="/home/zlc/VINS/bin/libcamera_model.so" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/zlc/VINS/build"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/zlc/VINS/include"/>
+					<Add directory="/home/zlc/include/eigen3"/>
+					<Add directory="/usr/local/lib/cmake/Pangolin/../../../include"/>
+					<Add directory="/usr/local/include/eigen3"/>
+					<Add directory="/usr/include/c++/7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
+					<Add directory="/usr/include/c++/7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 camera_model"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="camera_model/fast">
+				<Option output="/home/zlc/VINS/bin/libcamera_model.so" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/zlc/VINS/build"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/zlc/VINS/include"/>
+					<Add directory="/home/zlc/include/eigen3"/>
+					<Add directory="/usr/local/lib/cmake/Pangolin/../../../include"/>
+					<Add directory="/usr/local/include/eigen3"/>
+					<Add directory="/usr/include/c++/7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
+					<Add directory="/usr/include/c++/7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 camera_model/fast"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/zlc/VINS/build"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="JmVio">
+				<Option output="/home/zlc/VINS/bin/libJmVio.so" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/zlc/VINS/build"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DGFLAGS_IS_A_DLL=0"/>
+					<Add directory="/home/zlc/VINS/include"/>
+					<Add directory="/home/zlc/include/eigen3"/>
+					<Add directory="/usr/local/lib/cmake/Pangolin/../../../include"/>
+					<Add directory="/usr/local/include/eigen3"/>
+					<Add directory="/usr/local/include/opencv"/>
+					<Add directory="/home/zlc/SLAMDep/eigen3.3.7"/>
+					<Add directory="/usr/include/c++/7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
+					<Add directory="/usr/include/c++/7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 JmVio"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="JmVio/fast">
+				<Option output="/home/zlc/VINS/bin/libJmVio.so" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/zlc/VINS/build"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DGFLAGS_IS_A_DLL=0"/>
+					<Add directory="/home/zlc/VINS/include"/>
+					<Add directory="/home/zlc/include/eigen3"/>
+					<Add directory="/usr/local/lib/cmake/Pangolin/../../../include"/>
+					<Add directory="/usr/local/include/eigen3"/>
+					<Add directory="/usr/local/include/opencv"/>
+					<Add directory="/home/zlc/SLAMDep/eigen3.3.7"/>
+					<Add directory="/usr/include/c++/7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
+					<Add directory="/usr/include/c++/7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 JmVio/fast"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/zlc/VINS/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/zlc/VINS/src/System.cpp">
+			<Option target="JmVio"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/src/backend/edge.cpp">
+			<Option target="JmVio"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/src/backend/imu_integration.cpp">
+			<Option target="JmVio"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/src/backend/loss_function.cpp">
+			<Option target="JmVio"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/src/backend/vertex.cpp">
+			<Option target="JmVio"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/src/camera_models/chessboard/Chessboard.cpp">
+			<Option target="camera_model"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/src/estimator.cpp">
+			<Option target="JmVio"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/src/feature_manager.cpp">
+			<Option target="JmVio"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/src/feature_tracker.cpp">
+			<Option target="JmVio"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/src/parameters.cpp">
+			<Option target="JmVio"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/src/utility/utility.cpp">
+			<Option target="JmVio"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/test/CurveFitting.cpp">
+			<Option target="testCurveFitting"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/test/run_euroc.cpp">
+			<Option target="run_euroc"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/../SLAMDep/eigen3.3.7/build/Eigen3Config.cmake">
+			<Option virtualFolder="CMake Files\..\SLAMDep\eigen3.3.7\build\"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/../SLAMDep/eigen3.3.7/build/Eigen3ConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\SLAMDep\eigen3.3.7\build\"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/../SLAMDep/eigen3.3.7/build/Eigen3Targets.cmake">
+			<Option virtualFolder="CMake Files\..\SLAMDep\eigen3.3.7\build\"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/../../../usr/local/lib/cmake/Ceres/CeresConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\local\lib\cmake\Ceres\"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/../../../usr/local/lib/cmake/Ceres/CeresConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\local\lib\cmake\Ceres\"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/../../../usr/local/lib/cmake/Ceres/CeresTargets-release.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\local\lib\cmake\Ceres\"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/../../../usr/local/lib/cmake/Ceres/CeresTargets.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\local\lib\cmake\Ceres\"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/../../../usr/local/lib/cmake/Ceres/FindGlog.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\local\lib\cmake\Ceres\"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/../../../usr/local/lib/cmake/Pangolin/PangolinConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\local\lib\cmake\Pangolin\"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/../../../usr/local/lib/cmake/Pangolin/PangolinConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\local\lib\cmake\Pangolin\"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/../../../usr/local/lib/cmake/Pangolin/PangolinTargets-release.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\local\lib\cmake\Pangolin\"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/../../../usr/local/lib/cmake/Pangolin/PangolinTargets.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\local\lib\cmake\Pangolin\"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/../../../usr/local/share/OpenCV/OpenCVConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\local\share\OpenCV\"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/../../../usr/local/share/OpenCV/OpenCVConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\local\share\OpenCV\"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/../../../usr/local/share/OpenCV/OpenCVModules-release.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\local\share\OpenCV\"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/../../../usr/local/share/OpenCV/OpenCVModules.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\local\share\OpenCV\"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/../../../usr/lib/x86_64-linux-gnu/cmake/gflags/gflags-config-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\lib\x86_64-linux-gnu\cmake\gflags\"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/../../../usr/lib/x86_64-linux-gnu/cmake/gflags/gflags-config.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\lib\x86_64-linux-gnu\cmake\gflags\"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/../../../usr/lib/x86_64-linux-gnu/cmake/gflags/gflags-targets-release.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\lib\x86_64-linux-gnu\cmake\gflags\"/>
+		</Unit>
+		<Unit filename="/home/zlc/VINS/../../../usr/lib/x86_64-linux-gnu/cmake/gflags/gflags-targets.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\usr\lib\x86_64-linux-gnu\cmake\gflags\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
