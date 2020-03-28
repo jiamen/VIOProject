@@ -103,6 +103,8 @@ void FeatureTracker::readImage(const cv::Mat &_img, double _cur_time)
     // △1. 判断图像是否需要均衡化
     if( EQUALIZE )  // 均衡化增强对比度, 默认值为1, 表示图像太亮或者太暗
     {
+        // CLAHE算法增强图像效果
+        // 代码中使用了cv::createCLAHE(3.0, cv::Size(8, 8))函数来增强图像的显示效果，这样便于后边的检测。
         cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE(3.0, cv::Size(8, 8));
         TicToc t_c;         /* 第2次计时 */
         clahe->apply(_img, img);
@@ -145,10 +147,11 @@ void FeatureTracker::readImage(const cv::Mat &_img, double _cur_time)
 
         // 根据status, 把跟踪失败的点剔除
         // 不仅要从当前帧数据forw_pts中剔除, 而且还要从cur_un_pts、prev_pts和cur_pts中剔除
-        // prev_pts和cur_pts中的特征点是一一对应的
+        // prev_pts和cur_pts中的特征点是一一对应的, 光流跟踪后的点的集合
         reduceVector(prev_pts, status);
         reduceVector(cur_pts, status);          // 上一帧和上上帧 特征点数量经过剔除后一致
         reduceVector(forw_pts, status);         //
+        // 将光流跟踪后的点的id和跟踪次数, 根据跟踪的状态(status)进行重组
         reduceVector(ids, status);              //
         reduceVector(cur_un_pts, status);       //
         reduceVector(track_cnt, status);        // 跟踪次数中剔除跟踪失败的点
@@ -166,7 +169,7 @@ void FeatureTracker::readImage(const cv::Mat &_img, double _cur_time)
 
         // ROS_DEBUG("set mask begins");
         TicToc t_m;         /* 第4次计时 */
-        setMask();  // 保证相邻的特征点之间要间隔30个像素, 设置mask
+        setMask();          // 保证相邻的特征点之间要间隔30个像素, 设置mask
         // ROS_DEBUG("set mask costs %fms", t_m.toc());
 
         // △6. 计算是否需要提取新的特征点
@@ -226,20 +229,23 @@ void FeatureTracker::readImage(const cv::Mat &_img, double _cur_time)
 // 通过基本矩阵(F)去除外点 outliers
 void FeatureTracker::rejectWithF()
 {
-    if( forw_pts.size() >= 8 )      // 当前帧大于8个, 使用8点法
+    if( forw_pts.size() >= 8 )      // 判断当前帧追踪到的角点是否大于8个, 使用8点法
     {
         // ROS_DEBUG("FM ransac begins");
         TicToc t_f;
-        vector<cv::Point2f> un_cur_pts(cur_pts.size()), un_forw_pts(forw_pts.size());
+        vector<cv::Point2f> un_cur_pts(cur_pts.size()), un_forw_pts(forw_pts.size());   // 图像上的角点对应的归一化平面坐标
         for(unsigned int i = 0; i < cur_pts.size(); i ++ )
         {
             Eigen::Vector3d tmp_p;
-
+            // 将点从图像平面对应到投影空间, tmp_p为输出结果。 其实就是2d-->3d的转换过程
+            // cur_pts 中保存的是上一帧图像的角点
             m_camera->liftProjective(Eigen::Vector2d(cur_pts[i].x, cur_pts[i].y), tmp_p);
+            // 转换为归一化像素坐标, FOCAL_LENGTH 的值为460
             tmp_p.x() = FOCAL_LENGTH * tmp_p.x() / tmp_p.z() + COL / 2.0;
             tmp_p.y() = FOCAL_LENGTH * tmp_p.y() / tmp_p.z() + ROW / 2.0;
             un_cur_pts[i] = cv::Point2f(tmp_p.x(), tmp_p.y());
 
+            // forw_pts 中保存的是当前图像中能通过光流追踪到的角点的坐标
             m_camera->liftProjective(Eigen::Vector2d(forw_pts[i].x, forw_pts[i].y), tmp_p);
             tmp_p.x() = FOCAL_LENGTH * tmp_p.x() / tmp_p.z() + COL / 2.0;
             tmp_p.y() = FOCAL_LENGTH * tmp_p.y() / tmp_p.z() + ROW / 2.0;
@@ -247,6 +253,8 @@ void FeatureTracker::rejectWithF()
         }
 
         vector<uchar> status;
+        // 计算基础矩阵： 利用上一帧图像的角点和当前图像角点, 来计算基础矩阵
+        /* 从两个图像中对应的3d点对来计算基础矩阵 */
         cv::findFundamentalMat(un_cur_pts, un_forw_pts, cv::FM_RANSAC, F_THRESHOLD, 0.99, status);
         int size_a = cur_pts.size();
         reduceVector(prev_pts, status);
@@ -292,9 +300,86 @@ void FeatureTracker::showUndistortion(const string &name)
             Eigen::Vector3d b;
             m_camera->liftProjective(a, b);
             distortedp.push_back(a);
+            undistortedp.push_back(Eigen::Vector2d(b.x() / b.z(), b.y() / b.z()));
+            // printf("%f, %f->%f, %f, %f\n)\n", a.x(), a.y(), b.x(), b.y(), b.z());
         }
     }
 
+    for( int i = 0; i < int(undistortedp.size()); i ++ )
+    {
+        cv::Mat pp(3, 1, CV_32FC1);
+        pp.at<float>(0, 0) = undistortedp[i].x() * FOCAL_LENGTH + COL / 2;
+        pp.at<float>(1, 0) = undistortedp[i].y() * FOCAL_LENGTH + ROW / 2;
+        pp.at<float>(2, 0) = 1.0;
+        // cout << trackerData[0].K << endl;
+        // printf("%lf %lf\n", p.at<float>(1, 0), p.at<float>(0, 0));
+        // printf("%lf %lf\n", pp.at<float>(1, 0), pp.at<float>(0, 0));
+
+        if( pp.at<float>(1, 0) + 300 >= 0 && pp.at<float>(1, 0) + 300 < ROW + 600 && pp.at<float>(0, 0) + 300 >= 0 && pp.at<float>(0, 0) + 300 < COL + 600 )
+        {
+            undistortedImg.at<uchar>(pp.at<float>(1, 0) + 300, pp.at<float>(0, 0) + 300) = cur_img.at<uchar>(distortedp[i].y(), distortedp[i].x());
+        }
+        else
+        {
+            //ROS_ERROR("(%f %f) -> (%f %f)", distortedp[i].y, distortedp[i].x, pp.at<float>(1, 0), pp.at<float>(0, 0));
+        }
+    }
+
+    cv::imshow(name, undistortedImg);
+    cv::waitKey(0);
 }
 
+void FeatureTracker::undistortedPoints()
+{
+    cur_un_pts.clear();
+    cur_un_pts_map.clear();
 
+    // cv::undistortPoints(cur_pts, un_pts, K, cv::Mat());
+    for( unsigned int i = 0; i < cur_pts.size(); i ++ )
+    {
+        Eigen::Vector2d a(cur_pts[i].x, cur_pts[i].y);
+        Eigen::Vector3d b;
+
+        m_camera->liftProjective(a, b);
+        cur_un_pts.push_back(cv::Point2f(b.x() / b.z(), b.y() / b.z()));
+        cur_un_pts_map.insert( make_pair(ids[i], cv::Point2f(b.x() / b.z(), b.y() / b.z())) );
+        // printf("cur pts id %d %f %f", ids[i], cur_un_pts[i].x, cur_un_pts[i].y);
+    }
+
+    // calculate points velocity
+    if( !prev_un_pts_map.empty() )
+    {
+        double dt = cur_time - prev_time;
+        pts_velocity.clear();
+
+        for(unsigned int i = 0; i < cur_un_pts.size(); i ++ )
+        {
+            if( ids[i] != -1 )
+            {
+                std::map<int, cv::Point2f>::iterator it;
+                it = prev_un_pts_map.find(ids[i]);
+                if( it != prev_un_pts_map.end() )
+                {
+                    double v_x = (cur_un_pts[i].x - it->second.x) / dt;
+                    double v_y = (cur_un_pts[i].y - it->second.y) / dt;
+                    pts_velocity.push_back(cv::Point2f(v_x, v_y));
+                }
+                else
+                    pts_velocity.push_back(cv::Point2f(0, 0));
+            }
+            else
+            {
+                pts_velocity.push_back(cv::Point2f(0, 0));
+            }
+        }
+    }
+    else
+    {
+        for (unsigned int i = 0; i < cur_pts.size(); ++ i)
+        {
+            pts_velocity.push_back(cv::Point2f(0, 0));
+        }
+    }
+
+    prev_un_pts_map = cur_un_pts_map;
+}
