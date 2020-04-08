@@ -343,7 +343,7 @@ void FeatureManager::triangulate(Vector3d Ps[], Vector3d tic[], Matrix3d ric[])
 
         // 对上面得到的svd
         Eigen::Vector4d svd_V = Eigen::JacobiSVD<Eigen::MatrixXd>(svd_A, Eigen::ComputeThinV).matrixV().rightCols<1>();
-        double svd_method = svd_V[2] / svd_V[3];
+        double svd_method = svd_V[2] / svd_V[3];            // ☆☆☆☆☆ 得到深度值
         // it_per_id->estimated_depth = -b / A;
         // it_per_id->estimated_depth = svd_V[2] / svd_V[3];
 
