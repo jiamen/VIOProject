@@ -15,8 +15,8 @@ double MIN_PARALLAX;
 double ACC_N, ACC_W;    // 加速度计噪声—  — 高斯噪声, 随机游走
 double GYR_N, GYR_W;    // 陀螺仪噪声 — — 高斯噪声, 随机游走
 
-vector<Eigen::Matrix3d> RIC;
-vector<Eigen::Vector3d> TIC;
+vector<Eigen::Matrix3d> RIC;    // IMU 到 相机坐标系下的 外部参数 旋转变换矩阵
+vector<Eigen::Vector3d> TIC;    // IMU 和 相机坐标系下的 外部参数 平移变换
 
 Eigen::Vector3d G{0.0, 0.0, 9.8};   // 重力加速度
 

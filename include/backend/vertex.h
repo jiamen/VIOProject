@@ -39,7 +39,7 @@ extern unsigned long global_vertex_id;
 
         /**
          *  构造函数
-         *  @param num_dimension 顶点自身维度
+         *  @param num_dimension   顶点自身维度
          *  @param local_dimension 本地参数化维度, 为-1时认为与本身维度一样
          * */
         explicit Vertex(int num_dimension, int local_dimension = -1);  // 不允许发生隐式转换
@@ -72,7 +72,9 @@ extern unsigned long global_vertex_id;
 
         // 返回顶点的名称, 在子类中实现
         virtual std::string TypeInfo() const = 0;
+
         unsigned long OrderingId() const { return ordering_id_; }
+
         void SetOrderingId(unsigned long id) { ordering_id_ = id; }
 
 

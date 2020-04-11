@@ -82,6 +82,7 @@ bool GlobalSFM::solveFrameByPnP(Matrix3d &R_initial, Vector3d &P_initial, int i,
     return true;
 }
 
+
 /* 输入两帧的pose, 三角化它们共同观测的特征点, 之前已经被三角化的特征点不再处理 */
 void GlobalSFM::triangulateTwoFrames(int frame0, Eigen::Matrix<double, 3, 4> &Pose0,
                           int frame1, Eigen::Matrix<double, 3, 4> &Pose1,
@@ -320,6 +321,7 @@ bool GlobalSFM::construct(int frame_num, Quaterniond* q, Vector3d* T, int l,
         //cout << "vision only BA not converge " << endl;
         return false;
     }
+
     for (int i = 0; i < frame_num; i++)
     {
         q[i].w() = c_rotation[i][0];
@@ -340,6 +342,8 @@ bool GlobalSFM::construct(int frame_num, Quaterniond* q, Vector3d* T, int l,
         if(sfm_f[i].state)
             sfm_tracked_points[sfm_f[i].id] = Vector3d(sfm_f[i].position[0], sfm_f[i].position[1], sfm_f[i].position[2]);
     }
+
+
     return true;
 
 }

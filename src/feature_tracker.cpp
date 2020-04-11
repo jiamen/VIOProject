@@ -226,6 +226,7 @@ void FeatureTracker::readImage(const cv::Mat &_img, double _cur_time)
     prev_time = cur_time;
 }
 
+
 // 通过基本矩阵(F)去除外点 outliers
 void FeatureTracker::rejectWithF()
 {
@@ -233,15 +234,24 @@ void FeatureTracker::rejectWithF()
     {
         // ROS_DEBUG("FM ransac begins");
         TicToc t_f;
-        vector<cv::Point2f> un_cur_pts(cur_pts.size()), un_forw_pts(forw_pts.size());   // 图像上的角点对应的归一化平面坐标
+        vector<cv::Point2f> un_cur_pts(cur_pts.size()), un_forw_pts(forw_pts.size());   // 上一帧和当前帧图像上的角点对应的归一化平面坐标
         for(unsigned int i = 0; i < cur_pts.size(); i ++ )
         {
             Eigen::Vector3d tmp_p;
             // 将点从图像平面对应到投影空间, tmp_p为输出结果。 其实就是2d-->3d的转换过程
             // cur_pts 中保存的是上一帧图像的角点
             m_camera->liftProjective(Eigen::Vector2d(cur_pts[i].x, cur_pts[i].y), tmp_p);
-            // 转换为归一化像素坐标, FOCAL_LENGTH 的值为460
-            tmp_p.x() = FOCAL_LENGTH * tmp_p.x() / tmp_p.z() + COL / 2.0;
+            // 转换为归一化像素坐标, FOCAL_LENGTH 的值为460, 十四讲第86页, 后面的cx = COL/2 并且 cy = cy = ROW/2
+            /*
+             *  ------------------------------------------------>
+             *  |                       COL/2.0
+             *  |
+             *  |                       tmp.x()
+             *  |  ROW/2.0              tmp.y()
+             *  |
+             *  ↓
+             * */
+            tmp_p.x() = FOCAL_LENGTH * tmp_p.x() / tmp_p.z() + COL / 2.0;   // 十四讲中P85页提到的 [cx, cy] 原点的平移
             tmp_p.y() = FOCAL_LENGTH * tmp_p.y() / tmp_p.z() + ROW / 2.0;
             un_cur_pts[i] = cv::Point2f(tmp_p.x(), tmp_p.y());
 
@@ -268,6 +278,7 @@ void FeatureTracker::rejectWithF()
     }
 }
 
+
 bool FeatureTracker::updateID(unsigned int i)
 {
     if( i < ids.size() )
@@ -280,12 +291,14 @@ bool FeatureTracker::updateID(unsigned int i)
         return false;
 }
 
+
 /* 读取相机标定的内参 */
 void FeatureTracker::readIntrinsicParameter(const string& calib_file)
 {
     cout << "read parameter of camera " << calib_file << endl;
     m_camera = CameraFactory::instance()->generateCameraFromYamlFile(calib_file);
 }
+
 
 void FeatureTracker::showUndistortion(const string &name)
 {
@@ -328,6 +341,7 @@ void FeatureTracker::showUndistortion(const string &name)
     cv::imshow(name, undistortedImg);
     cv::waitKey(0);
 }
+
 
 void FeatureTracker::undistortedPoints()
 {

@@ -27,7 +27,7 @@ class FeaturePerFrame   // 每帧的基本数据, 每个路标点在一帧图像
 {               // _point 每帧的特征点[x, y, z, u, v, vx, vy]  ,  cur_td IMU和cam同步时间差
 public:
     double cur_td;
-    Vector3d point;     // 3D特征点坐标
+    Vector3d point;     // 相机坐标系下的 3D特征点坐标
     Vector2d uv;
     Vector2d velocity;
 
@@ -117,8 +117,8 @@ public:
     void triangulate(Vector3d Ps[], Vector3d tic[], Matrix3d ric[]);    // 特征点三角化求深度(SVD分解)
     void removeBackShiftDepth(Eigen::Matrix3d marg_R, Eigen::Vector3d marg_P, Eigen::Matrix3d new_R, Eigen::Vector3d new_P);
 
-    void removeBack();                  // 边缘化最老帧, 直接将特征点保存的帧号前移
-    void removeFront(int frame_count);  // 边缘化次新帧，对特征点在次新帧的信息移除
+    void removeBack();                      // 边缘化最老帧, 直接将特征点保存的帧号前移
+    void removeFront(int frame_count);      // 边缘化次新帧，对特征点在次新帧的信息移除
 
     void removeOutlier();       // 移除外点
 

@@ -14,7 +14,7 @@
 #include <mutex>    // 互斥量
 
 #include <fstream>
-#include <condition_variable>
+#include <condition_variable> // 条件变量
 
 
 #include <pangolin/pangolin.h>
@@ -25,7 +25,7 @@
 
 
 
-// IMU for VIO
+// IMU for VIO      IMU数据
 // 输入为IMU传感器得到的线性加速度和角速度，
 // 输出为积分得到的位姿(位置和角度)
 struct IMU_MSG
@@ -36,7 +36,8 @@ struct IMU_MSG
 };
 typedef std::shared_ptr<IMU_MSG const> ImuConstPtr;
 
-// Image for VIO
+
+// Image for VIO    图像
 struct IMG_MSG
 {
     double header;
@@ -64,13 +65,13 @@ private:
 
     FeatureTracker trackerData[NUM_OF_CAM];
     double first_image_time;
-    int pub_count;
+    int pub_count = 1;
     bool first_image_flag = true;
     double last_image_time = 0;
     bool init_pub = 0;
 
     // estimator
-    // Estimator estimator;
+    Estimator estimator;
 
     std::condition_variable con;
     double current_time = -1;
@@ -86,24 +87,25 @@ private:
 
 
     double latest_time;
-    Eigen::Vector3d tmp_P;
-    Eigen::Quaterniond tmp_Q;
-    Eigen::Vector3d tmp_V;
-    Eigen::Vector3d tmp_Ba;
-    Eigen::Vector3d tmp_Bg;
-    Eigen::Vector3d acc_0;
-    Eigen::Vector3d gyr_0;
+    Eigen::Vector3d tmp_P;          // IMU位移
+    Eigen::Quaterniond tmp_Q;       // IMU旋转
+    Eigen::Vector3d tmp_V;          // IMU速度
+    Eigen::Vector3d tmp_Ba;         // IMU加速度随机游走
+    Eigen::Vector3d tmp_Bg;         // IMU陀螺仪随机游走
+    Eigen::Vector3d acc_0;          // 加速度值
+    Eigen::Vector3d gyr_0;          // 陀螺仪值
+
     bool init_feature = 0;
     bool init_imu = 1;
-    double last_imu = 0;
+    double last_imu_t = 0;
     std::ofstream ofs_pose;
     std::vector<Eigen::Vector3d> vPath_to_draw;
     bool bStart_backend;
-    std::vector< std::pair< std::vector<ImuConstPtr>, std::vector<ImgConstPtr> > > getMeasurements();
+    std::vector< std::pair< std::vector<ImuConstPtr>, ImgConstPtr > > getMeasurements();
 
 
 public:
-    System(const std::string& sConfig_file_);
+    System(const std::string sConfig_files);
 
     void PubImageData(double dStampSec, cv::Mat &img);
     void PubImuData(double dStampSec, const Eigen::Vector3d &vGyr, const Eigen::Vector3d &vAcc);

@@ -37,7 +37,7 @@ bool InitialEXRotation::CalibrationExRotation(vector<pair<Vector3d, Vector3d> > 
         Quaterniond r1(Rc[i]);
         Quaterniond r2(Rc_g[i]);
 
-        // Step3： 求取估计出的相机与IMU之间 旋转的残差
+        // Step3： 求取估计出的相机与IMU之间 旋转的角度残差
         double angular_distance = 180 / M_PI * r1.angularDistance(r2);      // 1弧度 = 180/π°(度)
         // ROS_DEBUG("%d %f", i, angular_distance);
 
@@ -74,7 +74,7 @@ bool InitialEXRotation::CalibrationExRotation(vector<pair<Vector3d, Vector3d> > 
     // 解为系数矩阵A的右奇异向量V中最小奇异值对应的特征向量
     JacobiSVD<MatrixXd> svd(A, ComputeFullU | ComputeFullV);
     Matrix<double, 4, 1> x = svd.matrixV().col(3);       // SVD原理, 右边第4列对应最小向量
-    Quaterniond estimated_R(x);                             // 矩阵转向量
+    Quaterniond estimated_R(x);                             // 矩阵转四元数
     ric = estimated_R.toRotationMatrix().inverse();         // ric =  rci^-1 = rci^T   ||   q_bc = q_cb^(-1)
 
     // Step7：判断对于相机与IMU的相对旋转是否满足终止条件
@@ -82,6 +82,7 @@ bool InitialEXRotation::CalibrationExRotation(vector<pair<Vector3d, Vector3d> > 
     // 2.A矩阵第二小的奇异值是否大于某个阈值，使A得零空间的秩为1
     Vector3d ric_cov;
     ric_cov = svd.singularValues().tail<3>();
+    // 至少迭代计算了WINDOW_SIZE次，且R的奇异值大于0.25才认为标定成功
     if ( frame_count >= WINDOW_SIZE && ric_cov(1) > 0.25 )
     {
         calib_ric_result = ric;

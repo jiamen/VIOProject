@@ -31,10 +31,10 @@ extern int MIN_DIST;    // 特征点之间的最小间隔
 extern int FREQ;                    // 控制发布次数的频率
 extern double F_THRESHOLD;          // ransac算法的门限
 extern int SHOW_TRACK;              // 是否发布跟踪点的图像
-extern bool STEREO_TRACK;       // 双目跟踪则为1
+extern bool STEREO_TRACK;           // 双目跟踪则为1
 extern int EQUALIZE;                // 光太亮或太暗则为1，进行直方图均衡化
 extern int FISHEYE;                 // 如果是鱼眼相机则为 1
-extern bool PUB_THIS_FRAME;     // 是否需要发布特征点
+extern bool PUB_THIS_FRAME;         // 是否需要发布特征点
 
 
 // estimator
