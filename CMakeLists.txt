@@ -39,10 +39,17 @@ add_library(JmVio SHARED
 
         src/utility/utility.cpp
 
+        src/initial/initial_ex_rotation.cpp
+        src/initial/initial_sfm.cpp
+        src/initial/solve_5pts.cpp
+        src/initial/initial_aligment.cpp
+
+
         src/backend/loss_function.cpp
         src/backend/imu_integration.cpp
         src/backend/vertex.cpp
         src/backend/edge.cpp
+        src/backend/vertex_pose.cpp
 )
 
 target_link_libraries(JmVio
