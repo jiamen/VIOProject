@@ -21,9 +21,9 @@ Vertex::Vertex(int num_dimension, int local_dimension)
     local_dimension_ = local_dimension > 0 ? local_dimension : num_dimension;
     id_ = global_vertex_id ++;
 
-    cout << "Vertex construct num_dimension: " << num_dimension << endl
-         << "local_dimension: " << local_dimension << endl
-         << "id_: " << id_ << endl;
+    //cout << "Vertex construct num_dimension: " << num_dimension << endl
+    //     << "local_dimension: " << local_dimension << endl
+    //     << "id_: " << id_ << endl;
 }
 
 Vertex::~Vertex() {}

@@ -15,6 +15,16 @@ namespace backend
 {
 
 /**
+ * loss function 即鲁棒核函数
+ * loss套在误差之上
+ * 假设某条边的残差为r，信息矩阵为I, 那么平方误差为r^T*I*r，令它的开方为e
+ * 那么loss就是Compute(e)
+ * 在求导时，也必须将loss function放到求导的第一项
+ *
+ * LossFunction是各核函数的基类，它可以派生出各种Loss
+ */
+
+/**
  * compute the scaling factor for a error
  *
  * The error is e^T Ω e  残差项

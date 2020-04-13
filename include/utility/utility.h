@@ -13,11 +13,12 @@
 #include <cstring>
 #include <eigen3/Eigen/Dense>
 
-class Utility {
+class Utility
+{
 public:
     template<typename Derived>
-    static Eigen::Quaternion<typename Derived::Scalar>
-    deltaQ(const Eigen::MatrixBase<Derived> &theta) {   // theta = wδt      △q = [1  1/2wδt]
+    static Eigen::Quaternion<typename Derived::Scalar> deltaQ(const Eigen::MatrixBase<Derived> &theta)
+    {   // theta = wδt      △q = [1  1/2wδt]
         typedef typename Derived::Scalar Scalar_t;
 
         Eigen::Quaternion<Scalar_t> dq;

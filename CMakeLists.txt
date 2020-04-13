@@ -50,6 +50,9 @@ add_library(JmVio SHARED
         src/backend/vertex.cpp
         src/backend/edge.cpp
         src/backend/vertex_pose.cpp
+        src/backend/edge_reprojection.cpp
+        src/backend/edge_imu.cpp
+        src/backend/edge_prior.cpp
 )
 
 target_link_libraries(JmVio

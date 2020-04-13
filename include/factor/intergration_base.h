@@ -30,7 +30,7 @@ public:
     Eigen::Matrix<double, 18, 18> noise;        // 噪声项的对角协方差矩阵
 
     double sum_dt;
-    Eigen::Vector3d delta_p;
+    Eigen::Vector3d delta_p;        // 位移预积分值 αbibj
     Eigen::Quaterniond delta_q;
     Eigen::Vector3d delta_v;
 
@@ -48,6 +48,7 @@ public:
               sum_dt{0.0}, delta_p{Eigen::Vector3d::Zero()}, delta_q{Eigen::Quaterniond::Identity()}, delta_v{Eigen::Vector3d::Zero()}
 
     {
+        // 噪声项的对角协方差矩阵
         noise = Eigen::Matrix<double, 18, 18>::Zero();
         noise.block<3, 3>(0, 0) =  (ACC_N * ACC_N) * Eigen::Matrix3d::Identity();
         noise.block<3, 3>(3, 3) =  (GYR_N * GYR_N) * Eigen::Matrix3d::Identity();
@@ -216,6 +217,8 @@ public:
     {
         Eigen::Matrix<double, 15, 1> residuals;
 
+        // 首先获取预积分的PQV向量对陀螺仪和加速度的偏置的雅克比矩阵, 然后计算偏置的变化量, 根据偏置的更新对预积分的值进行矫正,
+        // 下面的corrected_delta_q, corrected_delta_v, corrected_delta_p 是 矫正后的预积分
         Eigen::Matrix3d dp_dba = jacobian.block<3, 3>(O_P, O_BA);   // (0, 9)
         Eigen::Matrix3d dp_dbg = jacobian.block<3, 3>(O_P, O_BG);   // (0, 12)
 
@@ -227,11 +230,15 @@ public:
         Eigen::Vector3d dba = Bai - linearized_ba;
         Eigen::Vector3d dbg = Bgi - linearized_bg;
 
-        Eigen::Quaterniond corrected_delta_q = delta_q * Utility::deltaQ(dq_dbg * dbg);
+        // 第3讲PPT 70页 公式(77)
+        // 在求解预积分时, 是假设IMU的偏置ba, bw已经确定, 实际上在后续的优化中对偏置页进行了优化。
+        // 那么每次优化时, ba, bw发生改变需要重新根据公式求得所有帧之间的IMU的预积分。
+        // 当偏置变化很小时，可以将预积分值按其对偏置的一阶近似来调整，否则就进行重新传递reprogagte。
+        Eigen::Quaterniond corrected_delta_q = delta_q * Utility::deltaQ(dq_dbg * dbg); // 这里看deltaQ函数, 确实是1/2 J_bg δb_i
         Eigen::Vector3d corrected_delta_v = delta_v + dv_dba * dba + dv_dbg * dbg;
         Eigen::Vector3d corrected_delta_p = delta_p + dp_dba * dba + dp_dbg * dbg;
 
-        // 下面正式开始为 15*1 的残差项赋值
+        // 下面正式开始为 15*1 的残差项赋值, 在第3讲PPT的69页
         // Qi: q_w_bi ;  Qi.inverse(): q_bi_w   rp = q_bi_w * ( 1/2 g_w △t^2  )
         residuals.block<3, 1>(O_P, 0) = Qi.inverse() * (0.5 * G * sum_dt * sum_dt + Pj - Pi - Vi * sum_dt) - corrected_delta_p;
         residuals.block<3, 1>(O_R, 0) = 2 * (corrected_delta_q.inverse() * (Qi.inverse() * Qj)).vec();
