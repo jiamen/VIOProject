@@ -76,7 +76,7 @@ bool FeatureManager::addFeatureCheckParallax(int frame_count, const map<int, vec
             feature.push_back(FeaturePerId(feature_id, frame_count));
             feature.back().feature_per_frame.push_back(f_per_fra);
         }
-        // 1.3 之前有的话在FeaturePerFrame添加已有的此特征点 在此帧image 的位置和其他信息, 并统计数目.
+            // 1.3 之前有的话在FeaturePerFrame添加已有的此特征点 在此帧image 的位置和其他信息, 并统计数目.
         else if ( it->feature_id == feature_id )
         {
             it->feature_per_frame.push_back(f_per_fra);
@@ -382,7 +382,7 @@ void FeatureManager::removeOutlier()
 /////////////////   下面是 3 个边缘化函数   /////////////////
 
 /* 边缘化最老帧时, 处理特征点保存的帧号, 将起始帧是最老帧的特征点的深度值 进行转移 */
-                                                        // Rwi                      Pwi                    Rwj                    Pwj
+// Rwi                      Pwi                    Rwj                    Pwj
 void FeatureManager::removeBackShiftDepth(Eigen::Matrix3d marg_R, Eigen::Vector3d marg_P, Eigen::Matrix3d new_R, Eigen::Vector3d new_P)
 {                                                    // margR、marg_P 为被边缘化的位姿, new_R、new_P 为在这下一帧的位姿
     for ( auto it = feature.begin(), it_next = feature.begin(); it != feature.end(); it = it_next )
@@ -392,7 +392,7 @@ void FeatureManager::removeBackShiftDepth(Eigen::Matrix3d marg_R, Eigen::Vector3
         // 特征点起始帧不是最老帧， 则将帧号 减1
         if ( it->start_frame != 0 )
             it->start_frame --;
-        // 特征点起始帧是最老帧
+            // 特征点起始帧是最老帧
         else
         {
             Eigen::Vector3d uv_i = it->feature_per_frame[0].point;      // 保存下 该特征点在 第一帧下的归一化 3维坐标点
@@ -441,8 +441,8 @@ void FeatureManager::removeBack()
         if ( it->start_frame != 0 )
             it->start_frame --;
 
-        // 如果start_frame为0则直接移除feature_per_frame的第0帧FeaturePerFrame
-        // 如果feature_per_frame 为空则直接删除特征点
+            // 如果start_frame为0则直接移除feature_per_frame的第0帧FeaturePerFrame
+            // 如果feature_per_frame 为空则直接删除特征点
         else
         {
             it->feature_per_frame.erase(it->feature_per_frame.begin());

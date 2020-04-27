@@ -26,7 +26,7 @@ double SOLVER_TIME;             // 求解时间
 
 int NUM_ITERATIONS;             // 迭代次数
 int ESTIMATE_EXTRINSIC;         // 外参数估计
-int EXTIMATE_TD;
+int ESTIMATE_TD;
 int ROLLING_SHUTTER;
 string EX_CALIB_RESULT_PATH;    // 外参数标定结果路径  相机模型 K 矩阵
 string VINS_RESULT_PATH;
@@ -50,7 +50,7 @@ int EQUALIZE;                // 光太亮或太暗则为1，进行直方图均�
 int FISHEYE;                 // 如果是鱼眼相机则为 1
 bool PUB_THIS_FRAME;     // 是否需要发布特征点
 
-void readpPatameters(string config_file)
+void readParameters(string config_file)
 {
     // 1. 读取文件
     cv::FileStorage fsSettings(config_file, cv::FileStorage::READ);
@@ -84,7 +84,7 @@ void readpPatameters(string config_file)
 
 
     // IMU 和 相机坐标系下的外部参数变换
-    ESTIMATE_EXTRINSIC = fsSettings["estimate_extrinsic"];
+    ESTIMATE_EXTRINSIC = fsSettings["estimate_extrinsic"];  // ESTIMATE_EXTRINSIC = 0, 不需要进行参数估计
     if ( ESTIMATE_EXTRINSIC == 2 )
     {
         // ROS_WARN("have no prior extrinsic param, calibrate extrinsic param");
@@ -99,7 +99,7 @@ void readpPatameters(string config_file)
             // ROS_WARN(" Optimize extrinsic param around initial guess!");
             EX_CALIB_RESULT_PATH = OUTPUT_PATH + "/extrinsic_parameter.csv";
         }
-        if ( ESTIMATE_EXTRINSIC == 0 )
+        if ( ESTIMATE_EXTRINSIC == 0 )      // 不需要估计camera和IMU之间的外部旋转和平移参数
         {
             cout << "fix extrinsic param " << endl;
         }
@@ -175,7 +175,7 @@ void readpPatameters(string config_file)
          << "\n GYR_N: " << GYR_N
          << "\n GYR_W: " << GYR_W
          << "\n RIC: " << RIC[0]
-         << "\n TIC: " << TIC[0]
+         << "\n TIC: " << TIC[0].transpose()
          << "\n G： "  << G.transpose()
          << "\n BIAS_ACC_THRESHOLD: " << BIAS_ACC_THRESHOLD
          << "\n BIAS_GYR_THRESHOLD: " << BIAS_GYR_THRESHOLD

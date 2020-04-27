@@ -50,6 +50,7 @@ public:
     vector<cv::Point2f> pts_velocity;      // 当前帧相对前一帧特征点沿x, y方向的像素移动速度
     vector<int> ids;        // 能够被跟踪到的特征点的id
     vector<int> track_cnt;  // 当前帧forw_img中每个特征点被追踪的次数
+
     map<int, cv::Point2f> cur_un_pts_map;
     map<int, cv::Point2f> prev_un_pts_map;  // 把特征点的id和特征点位置封装起来的数据类型
 
@@ -63,6 +64,7 @@ public:
     FeatureTracker();
 
     void readImage(const cv::Mat &_img, double _cur_time);      // ☆☆☆△△△ 读取图像
+    void loadPointData(string point_file_name, double _cur_time);
 
     void setMask();     // 对跟踪点进行排序并去除密集点
 
@@ -77,6 +79,7 @@ public:
     void rejectWithF();             // 通过基本矩阵（F）去除外点outliers
 
     void undistortedPoints();       // 进行畸变矫正
+    void undistortedSimPoints();       // 进行畸变矫正
 
 };
 

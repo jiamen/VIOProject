@@ -31,7 +31,7 @@
 struct IMU_MSG
 {
     double header;
-    Eigen::Vector3d liner_acceleration;
+    Eigen::Vector3d linear_acceleration;
     Eigen::Vector3d angular_velocity;
 };
 typedef std::shared_ptr<IMU_MSG const> ImuConstPtr;
@@ -43,7 +43,7 @@ struct IMG_MSG
     double header;
     std::vector<Vector3d> points;
     std::vector<int> id_of_point;
-    std::vector<float> u_of_point;
+    std::vector<float> u_of_point;  // 图形坐标系的像素点坐标
     std::vector<float> v_of_point;
     std::vector<float> velocity_x_of_point;
     std::vector<float> velocity_y_of_point;
@@ -63,7 +63,7 @@ private:
     // ros::Publisher pub_img, pub_match;
     // ros::Publisher pub_restart;
 
-    FeatureTracker trackerData[NUM_OF_CAM];
+    FeatureTracker trackerData[NUM_OF_CAM];     // ∵就一个摄像头, ∴基本用法就是 trackerData[0]
     double first_image_time;
     int pub_count = 1;
     bool first_image_flag = true;
@@ -71,16 +71,16 @@ private:
     bool init_pub = 0;
 
     // estimator
-    Estimator estimator;
+    Estimator estimator;    // △△△ 状态估计类 △△△
 
-    std::condition_variable con;
+    std::condition_variable con;    // C++11 并发编程条件变量
     double current_time = -1;
     std::queue<ImuConstPtr> imu_buf;
     std::queue<ImgConstPtr> feature_buf;
     // std::queue<PointCloudConstPtr> relo_buf;
     int sum_of_wait = 0;
 
-    std::mutex m_buf;
+    std::mutex m_buf;       // 互斥量 mutex
     std::mutex m_state;
     std::mutex i_buf;
     std::mutex m_estimator;
@@ -95,7 +95,7 @@ private:
     Eigen::Vector3d acc_0;          // 加速度值
     Eigen::Vector3d gyr_0;          // 陀螺仪值
 
-    bool init_feature = 0;
+    bool init_feature = 0;          // 初始特征为0
     bool init_imu = 1;
     double last_imu_t = 0;
     std::ofstream ofs_pose;
@@ -107,6 +107,7 @@ private:
 public:
     System(const std::string sConfig_files);
 
+    void PubSimImageData(double dStampSec, string all_points_file_name);
     void PubImageData(double dStampSec, cv::Mat &img);
     void PubImuData(double dStampSec, const Eigen::Vector3d &vGyr, const Eigen::Vector3d &vAcc);
 

@@ -64,7 +64,7 @@ extern double SOLVER_TIME;                  // 求解时间
 extern int NUM_ITERATIONS;                  // 迭代次数
 extern std::string EX_CALIB_RESULT_PATH;    //
 extern std::string VINS_RESULT_PATH;
-extern double TD;
+extern double TD;       //
 extern double TR;
 extern int ESTIMATE_TD;
 extern int ROLLING_SHUTTER;

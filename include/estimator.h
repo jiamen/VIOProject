@@ -56,12 +56,12 @@ public:
     MatrixXd Ap[2], backup_A;
     VectorXd bp[2], backup_b;
 
-    Matrix3d ric[NUM_OF_CAM];
-    Vector3d tic[NUM_OF_CAM];
+    Matrix3d ric[NUM_OF_CAM];           // IMU和camera 旋转外参数
+    Vector3d tic[NUM_OF_CAM];           // IMU和camera 平移外参数
 
-    Vector3d Ps[(WINDOW_SIZE + 1)];
+    Vector3d Ps[(WINDOW_SIZE + 1)];     // IMU 预积分相关参数
     Vector3d Vs[(WINDOW_SIZE + 1)];
-    Matrix3d Rs[(WINDOW_SIZE + 1)];
+    Matrix3d Rs[(WINDOW_SIZE + 1)];     // IMU 预积分得到的旋转
     Vector3d Bas[(WINDOW_SIZE + 1)];
     Vector3d Bgs[(WINDOW_SIZE + 1)];
     double td;
@@ -159,7 +159,6 @@ public:
     void vector2double();           // vector转换成double数组, 因为ceres使用数值数组
     void double2vector();           // 数据转换, vector2double的相反过程
     bool failureDetection();        // 检测系统运行是否失败
-
 
 
 };

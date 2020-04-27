@@ -28,6 +28,15 @@ void reduceVector(vector<cv::Point2f> &v, vector<uchar> status) // 将status判�
     v.resize(j);
 }
 
+void reduceVector(vector<int> &v, vector<uchar> status)
+{
+    int j = 0;
+    for (int i = 0; i < int(v.size()); i++)
+        if (status[i])
+            v[j++] = v[i];
+    v.resize(j);
+}
+
 FeatureTracker::FeatureTracker()
 {
 
@@ -88,7 +97,7 @@ void FeatureTracker::addPoints()
     {
         forw_pts.push_back(p);
         ids.push_back(-1);
-        track_cnt.push_back(1);
+        track_cnt.push_back(1); // 重新加入的点， 跟踪次数肯定为1
     }
 }
 
@@ -165,17 +174,18 @@ void FeatureTracker::readImage(const cv::Mat &_img, double _cur_time)
     // △5. 发布这一帧数据
     if ( PUB_THIS_FRAME )
     {
-        rejectWithF();      // 通过基本矩阵剔除outliers
+        rejectWithF();      // 通过基本矩阵剔除outliers, 删除一部分点
 
         // ROS_DEBUG("set mask begins");
         TicToc t_m;         /* 第4次计时 */
-        setMask();          // 保证相邻的特征点之间要间隔30个像素, 设置mask
+
+        setMask();          // 保证相邻的特征点之间要间隔30个像素, 设置mask, 并且在这一步中根据track_cnt对ids号进行了排序
         // ROS_DEBUG("set mask costs %fms", t_m.toc());
 
         // △6. 计算是否需要提取新的特征点
         // ROS_DEBUG("detect feature begins");
         TicToc t_t;         /* 第5次计时 */
-        int n_max_cnt = MAX_CNT - static_cast<int>(forw_pts.size());
+        int n_max_cnt = MAX_CNT - static_cast<int>(forw_pts.size());    // 最大需要跟踪的点 - 当前帧已经跟踪的
         if( n_max_cnt > 0 )
         {
             if( mask.empty() )
@@ -203,7 +213,7 @@ void FeatureTracker::readImage(const cv::Mat &_img, double _cur_time)
 
             cv::goodFeaturesToTrack(forw_img, n_pts, MAX_CNT-forw_pts.size(), 0.01, MIN_DIST, mask);
         }
-        else
+        else    // 不需要添加跟踪点
             n_pts.clear();
         // ROS_DEBUG("detect feature costs: %fms", t_t.toc());
 
@@ -215,7 +225,7 @@ void FeatureTracker::readImage(const cv::Mat &_img, double _cur_time)
     }
 
     // △8. 将当前帧数据传递给上一帧
-    prev_img = cur_img;         // 在第一帧处理中还是等于当前帧forw_img
+    prev_img = cur_img;         // 在第一帧处理中还是等于当前帧forw_img, 上一真赋值给上上帧
     prev_pts = cur_pts;         // 在第一帧中不作处理
     prev_un_pts = cur_un_pts;   // 在第一帧中不作处理
     cur_img = forw_img;         // 将当前帧赋给上一帧
@@ -225,6 +235,69 @@ void FeatureTracker::readImage(const cv::Mat &_img, double _cur_time)
     undistortedPoints();
     prev_time = cur_time;
 }
+
+
+
+/// 作业中添加的代码：  loadPointData(points_file_name, dStampSec);
+void FeatureTracker::loadPointData(string point_file_name, double _cur_time)
+{
+    TicToc t_r;             /* 第1次计时 */
+    cur_time = _cur_time;
+
+    // △2. 判断当前帧是否为第一次读入图像数据
+    forw_pts.clear();       // 此时forw_pts还保存的是上一帧图像中的特征点, 所以把它清除
+    ifstream fsImage;
+    fsImage.open(point_file_name);
+    if ( !fsImage.is_open() )
+    {
+        cerr << "can't open point_file_name: " << point_file_name << endl;
+        return;
+    }
+
+    std::string sImagePoint_line;
+    double tmp;     // 用于存前4维数据
+    double u, v;
+    cv::Point2f p;
+
+    while ( std::getline(fsImage, sImagePoint_line) && !sImagePoint_line.empty() )
+    {
+        std::istringstream ssImageData(sImagePoint_line);
+
+        for ( int i=0; i<4; i ++ )
+            ssImageData >> tmp;
+
+        ssImageData >> p.x >> p.y;
+
+        forw_pts.push_back(p);
+    }
+
+    /*for (int i=0; i<int(forw_pts.size()); i ++)
+    {
+        cout << forw_pts[i] << endl;
+    }*/
+
+    // △4. 光流追踪成功后, 被成功跟踪后的特征点次数track_cnt就加1
+    for(auto &n : track_cnt )   // 遍历track_cnt, 每个角点的跟踪次数, 跟踪成功的点次数+1
+        n ++;
+
+    if ( cur_pts.size()==0 )
+    {
+        n_pts = forw_pts;
+        addPoints();
+        // ROS_DEBUG("selectFeature costs: %fms", t_a.toc());
+    }
+
+    // △8. 将当前帧数据传递给上一帧
+    // prev_pts = cur_pts;         // 在第一帧中不作处理
+    prev_un_pts = cur_un_pts;   // 在第一帧中不作处理
+    cur_pts = forw_pts;
+
+    // △9. 从第2张图像输入后每进行一次循环, 最后还需要对匹配的特征点对进行畸变校正和深度归一化, 计算速度
+    undistortedSimPoints();
+    prev_time = cur_time;       // 最后再赋值时间, ∵ undistortedSimPoints()函数中要用到上一帧时间 prev_time
+
+}
+
 
 
 // 通过基本矩阵(F)去除外点 outliers
@@ -241,7 +314,7 @@ void FeatureTracker::rejectWithF()
             // 将点从图像平面对应到投影空间, tmp_p为输出结果。 其实就是2d-->3d的转换过程
             // cur_pts 中保存的是上一帧图像的角点
             m_camera->liftProjective(Eigen::Vector2d(cur_pts[i].x, cur_pts[i].y), tmp_p);
-            // 转换为归一化像素坐标, FOCAL_LENGTH 的值为460, 十四讲第86页, 后面的cx = COL/2 并且 cy = cy = ROW/2
+            // 转换为归一化像素坐标, FOCAL_LENGTH 的值为460, 十四讲第86页, 后面的cx = COL/2 并且 cy = ROW/2
             /*
              *  ------------------------------------------------>
              *  |                       COL/2.0
@@ -252,8 +325,8 @@ void FeatureTracker::rejectWithF()
              *  ↓
              * */
             tmp_p.x() = FOCAL_LENGTH * tmp_p.x() / tmp_p.z() + COL / 2.0;   // 十四讲中P85页提到的 [cx, cy] 原点的平移
-            tmp_p.y() = FOCAL_LENGTH * tmp_p.y() / tmp_p.z() + ROW / 2.0;
-            un_cur_pts[i] = cv::Point2f(tmp_p.x(), tmp_p.y());
+            tmp_p.y() = FOCAL_LENGTH * tmp_p.y() / tmp_p.z() + ROW / 2.0;   // Puv = K Pc(归一化点)
+            un_cur_pts[i] = cv::Point2f(tmp_p.x(), tmp_p.y());              // 像素点
 
             // forw_pts 中保存的是当前图像中能通过光流追踪到的角点的坐标
             m_camera->liftProjective(Eigen::Vector2d(forw_pts[i].x, forw_pts[i].y), tmp_p);
@@ -283,8 +356,10 @@ bool FeatureTracker::updateID(unsigned int i)
 {
     if( i < ids.size() )
     {
+        //cout << "before: " << ids[i] << " " << n_id << endl;
         if( ids[i] == -1 )
             ids[i] = n_id ++;
+        //cout <<"after: " << ids[i] << " " << n_id << endl;
         return true;
     }
     else
@@ -295,8 +370,8 @@ bool FeatureTracker::updateID(unsigned int i)
 /* 读取相机标定的内参 */
 void FeatureTracker::readIntrinsicParameter(const string& calib_file)
 {
-    cout << "read parameter of camera " << calib_file << endl;
-    m_camera = CameraFactory::instance()->generateCameraFromYamlFile(calib_file);
+    cout << "read parameter of camera " << calib_file << endl;      // calib_file = sConfig_path = ./config/euroc_config.yaml
+    m_camera = CameraFactory::instance()->generateCameraFromYamlFile(calib_file);   // 根据畸变模型参数和相机内参设置相机参数
 }
 
 
@@ -345,7 +420,7 @@ void FeatureTracker::showUndistortion(const string &name)
 
 void FeatureTracker::undistortedPoints()
 {
-    cur_un_pts.clear();
+    cur_un_pts.clear();             // 清空当前帧归一化平面上的特征点，注意上面有 cur_pts = forw_pts;
     cur_un_pts_map.clear();
 
     // cv::undistortPoints(cur_pts, un_pts, K, cv::Mat());
@@ -354,11 +429,12 @@ void FeatureTracker::undistortedPoints()
         Eigen::Vector2d a(cur_pts[i].x, cur_pts[i].y);
         Eigen::Vector3d b;
 
-        m_camera->liftProjective(a, b);
-        cur_un_pts.push_back(cv::Point2f(b.x() / b.z(), b.y() / b.z()));
+        m_camera->liftProjective(a, b);    // 投影到 3 维空间
+        cur_un_pts.push_back(cv::Point2f(b.x() / b.z(), b.y() / b.z()));    // 当前帧的归一化点
         cur_un_pts_map.insert( make_pair(ids[i], cv::Point2f(b.x() / b.z(), b.y() / b.z())) );
         // printf("cur pts id %d %f %f", ids[i], cur_un_pts[i].x, cur_un_pts[i].y);
     }
+
 
     // calculate points velocity
     if( !prev_un_pts_map.empty() )
@@ -376,6 +452,58 @@ void FeatureTracker::undistortedPoints()
                 {
                     double v_x = (cur_un_pts[i].x - it->second.x) / dt;
                     double v_y = (cur_un_pts[i].y - it->second.y) / dt;
+                    pts_velocity.push_back(cv::Point2f(v_x, v_y));      // 在归一化平面点上计算的速度
+                }
+                else
+                    pts_velocity.push_back(cv::Point2f(0, 0));
+            }
+            else
+            {
+                pts_velocity.push_back(cv::Point2f(0, 0));
+            }
+        }
+    }
+    else    // 上一帧没有速度, 所以判断为第一帧
+    {
+        for (unsigned int i = 0; i < cur_pts.size(); ++ i)
+        {
+            pts_velocity.push_back(cv::Point2f(0, 0));
+        }
+    }
+
+    prev_un_pts_map = cur_un_pts_map;
+}
+
+
+void FeatureTracker::undistortedSimPoints()
+{
+    cur_un_pts.clear();
+    cur_un_pts_map.clear();
+    //cv::undistortPoints(cur_pts, un_pts, K, cv::Mat());
+
+    for (unsigned int i = 0; i < cur_pts.size(); i++)
+    {
+        Eigen::Vector2d a(cur_pts[i].x, cur_pts[i].y);
+        cur_un_pts.push_back(cv::Point2f(cur_pts[i].x,cur_pts[i].y));
+        cur_un_pts_map.insert(make_pair(ids[i], cv::Point2f(cur_pts[i].x,cur_pts[i].y)));
+        //printf("cur pts id %d %f %f", ids[i], cur_un_pts[i].x, cur_un_pts[i].y);
+    }
+
+    // caculate points velocity
+    if (!prev_un_pts_map.empty())
+    {
+        double dt = cur_time - prev_time;
+        pts_velocity.clear();
+        for (unsigned int i = 0; i < cur_un_pts.size(); i++)
+        {
+            if (ids[i] != -1)
+            {
+                std::map<int, cv::Point2f>::iterator it;
+                it = prev_un_pts_map.find(ids[i]);
+                if (it != prev_un_pts_map.end())
+                {
+                    double v_x = (cur_un_pts[i].x - it->second.x) / dt;
+                    double v_y = (cur_un_pts[i].y - it->second.y) / dt;
                     pts_velocity.push_back(cv::Point2f(v_x, v_y));
                 }
                 else
@@ -389,11 +517,15 @@ void FeatureTracker::undistortedPoints()
     }
     else
     {
-        for (unsigned int i = 0; i < cur_pts.size(); ++ i)
+        for (unsigned int i = 0; i < cur_pts.size(); i++)
         {
             pts_velocity.push_back(cv::Point2f(0, 0));
         }
     }
-
     prev_un_pts_map = cur_un_pts_map;
 }
+
+
+
+
+

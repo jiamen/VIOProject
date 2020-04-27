@@ -24,7 +24,9 @@ using namespace Eigen;
 
 const int nDelayTimes = 2;  // 延时时间
 string sData_path = "/home/zlc/VIOFiles/MH_05_difficult/mav0/";
-string sConfig_path = "../config";
+//string sConfig_path = "../config";
+string sConfig_path = "/home/zlc/VIOFiles/02_IMU/vio_data_simulation/bin/";
+string sPointData_path = "/home/zlc/VIOFiles/02_IMU/vio_data_simulation/bin/keyframe/";
 
 std::shared_ptr<System> pSystem;    // System类型的智能指针
 
@@ -110,6 +112,83 @@ void PubImageData()
     fsImage.close();
 }
 
+
+// ====================================================================================================================
+
+/// △△△△△△ 新增作业函数：发布PubSimIMUData函数 △△△△△△
+void PubSimImuData()
+{
+    string sImu_data_file = sData_path + "imu_pose.txt";
+    cout << "1 PubImuData start sImu_data_file: " << sImu_data_file << endl;
+
+    ifstream fsImu;
+    fsImu.open(sImu_data_file.c_str());
+    if (!fsImu.is_open())
+    {
+        cerr << "Failed to open imu file! " << sImu_data_file << endl;
+        return;
+    }
+
+    std::string sImu_line;
+    double dStampNSec = 0.0;
+    double tmp;
+    Vector3d vAcc;
+    Vector3d vGyr;
+
+    while (std::getline(fsImu, sImu_line) && !sImu_line.empty()) // read imu data
+    {
+        std::istringstream ssImuData(sImu_line);
+        ssImuData >> dStampNSec;
+        // 0       0.99875 0.0499792 0 0 20 5 5       0 0.230364 0.292623 -1.48044 0.979366 9.76099
+        for(int i=0;i<7;i++)    // 跳过去7个数据, 具体文件格式见第2章代码中utilities.cpp中的save_Pose()
+            ssImuData>>tmp;
+        ssImuData>>vGyr.x() >> vGyr.y() >> vGyr.z() >> vAcc.x() >> vAcc.y() >> vAcc.z();    // 读取后6个数据
+        pSystem->PubImuData(dStampNSec, vGyr, vAcc);
+        usleep(5000*nDelayTimes);
+    }
+
+    fsImu.close();
+}
+
+
+/// △△△△△△ 新增作业函数：发布PubSimImageData函数 △△△△△△
+void PubSimImageData()
+{
+    string sImage_file = sData_path + "cam_pose.txt";     // 包含时间戳的文件, 这里我们只需要文件中的第一个参数 — — 时间戳
+    cout << "1 PubSimImageData start sImage_file: " << sImage_file << endl;
+
+    ifstream fsImage;
+    fsImage.open(sImage_file);
+    if ( !fsImage.is_open() )
+    {
+        cerr << "Failed to open image file!" << sImage_file << endl;
+        return;
+    }
+
+    std::string sImage_line;
+    double dStampNSec;
+    string sImgFileName;
+    int n = 0;  // 用于第n个相机对应的观测数据的文件名
+
+    while (std::getline(fsImage, sImage_line) &&!sImage_line.empty() )
+    {
+        std::istringstream ssImgData(sImage_line);
+        ssImgData >> dStampNSec;    // 读入时间戳
+        cout << "cam time: " << fixed << dStampNSec << endl;
+
+        string all_points_file_name = sPointData_path + "all_points_" + to_string(n) + ".txt";  //第n个相机对应的观测数据的文件名, 里面包含每一帧观测到的特征点
+        cout << "points_file: " << all_points_file_name << endl;
+        pSystem->PubSimImageData(dStampNSec, all_points_file_name);
+
+        usleep(50000 * nDelayTimes);
+
+        n ++;   // 读取下一文件
+    }
+
+    fsImage.close();
+}
+
+
 // 兼容性代码
 #ifdef __APPLE__
 // support for MacOS
@@ -175,17 +254,19 @@ int main(int argc, char* *argv)
         cerr << "./run_eruroc PATH_TO_FOLDER/MH-05/mav0 PATH_TO_CONFIG/config \n"
              << "For example: ./run_euroc /home/stevencui/dataset/EuRoC/MH-05-mav0 ../config/" << endl;
     }
+    // ./run_eruroc  /home/zlc/VIOFiles/MH_05_difficult/mav0/  ./config/
     sData_path = argv[1];
     sConfig_path = argv[2];
 
-    pSystem.reset(new System(sConfig_path));
+    pSystem.reset(new System(sConfig_path));    // sConfig_path = ./config/   执行System的构造函数流程见具体分析
 
     std::thread the_BackEnd(&System::ProcessBackEnd, pSystem);
 
-
-    // sleep(5);
     std::thread thd_PubImuData(PubImuData);
     std::thread thd_PubImageData(PubImageData);
+    // sleep(5);
+    // std::thread thd_PubImuData(PubSimImuData);
+    // std::thread thd_PubImageData(PubSimImageData);
 
 #ifdef __linux__
     std::thread thd_Draw(&System::Draw, pSystem);
