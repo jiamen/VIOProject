@@ -113,7 +113,7 @@ public:
                              Eigen::Vector3d &result_linearized_ba, Eigen::Vector3d &result_linearized_bg, bool update_jacobian)
     {
         //ROS_INFO("midpoint integration");
-        // delta_q = q_bi_bk  这个关系来自手写VIO第3讲 44页
+        // delta_q = q_bi_bk  这个关系来自手写VIO第3讲 44页, 也可以见崔博解析中的2.5节 两帧之间PVQ增量的中值法离散形式
         Vector3d un_acc_0 = delta_q * (_acc_0 - linearized_ba);
         Vector3d un_gyr = 0.5 * (_gyr_0 + _gyr_1) - linearized_bg;  // 1/2 w均值, 陀螺仪 角速度w均值
         // Q 增量 中值积分 result_delta_q = q_bi_bk+1
@@ -129,7 +129,8 @@ public:
         result_linearized_ba = linearized_ba;
         result_linearized_bg = linearized_bg;
 
-        if ( update_jacobian )
+
+        if ( update_jacobian )  // 更新雅克比, 崔博论文中PVQ增量误差分析中2.7节 的式(15)中的 F 和 V
         {
             Vector3d w_x = 0.5 * (_gyr_0 + _gyr_1) - linearized_bg;
             Vector3d a_0_x = _acc_0 - linearized_ba;
@@ -184,6 +185,7 @@ public:
 
             //step_jacobian = F;
             //step_V = V;
+            // 离散形式的PVQ增量误差的Jacobian和协方差
             jacobian = F * jacobian;    // 崔华坤解析公式(16), 手写VIO公式(78)
             covariance = F * covariance * F.transpose() + V * noise * V.transpose();  // VQV^T
         }
@@ -231,7 +233,7 @@ public:
         Eigen::Vector3d dbg = Bgi - linearized_bg;
 
         // 第3讲PPT 70页 公式(77)
-        // 在求解预积分时, 是假设IMU的偏置ba, bw已经确定, 实际上在后续的优化中对偏置页进行了优化。
+        // 在求解预积分时, 是假设IMU的偏置ba, bw已经确定, 实际上在后续的优化中对偏置也进行了优化。
         // 那么每次优化时, ba, bw发生改变需要重新根据公式求得所有帧之间的IMU的预积分。
         // 当偏置变化很小时，可以将预积分值按其对偏置的一阶近似来调整，否则就进行重新传递reprogagte。
         Eigen::Quaterniond corrected_delta_q = delta_q * Utility::deltaQ(dq_dbg * dbg); // 这里看deltaQ函数, 确实是1/2 J_bg δb_i

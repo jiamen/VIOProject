@@ -285,7 +285,6 @@ VectorXd FeatureManager::getDepthVector()
 
 
 /////////////////   对特征点进行三角化求深度(SVD分解)   /////////////////
-
 void FeatureManager::triangulate(Vector3d Ps[], Vector3d tic[], Matrix3d ric[])
 {
     for (auto &it_per_id : feature)

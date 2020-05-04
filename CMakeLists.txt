@@ -27,7 +27,18 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
 add_library(camera_model SHARED
         src/camera_models/chessboard/Chessboard.cpp
-        )
+        src/camera_models/calib/CameraCalibration.cc
+        src/camera_models/camera_models/Camera.cpp
+        src/camera_models/camera_models/CameraFactory.cpp
+        src/camera_models/camera_models/CostFunctionFactory.cpp
+        src/camera_models/camera_models/PinholeCamera.cpp
+        src/camera_models/camera_models/CataCamera.cpp
+        src/camera_models/camera_models/EquidistantCamera.cpp
+        src/camera_models/camera_models/ScaramuzzaCamera.cpp
+        src/camera_models/sparse_graph/Transform.cpp
+        src/camera_models/gpl/gpl.cc
+        src/camera_models/gpl/EigenQuaternionParameterization.cc
+)
 
 add_library(JmVio SHARED
         src/System.cpp
@@ -53,6 +64,7 @@ add_library(JmVio SHARED
         src/backend/edge_reprojection.cpp
         src/backend/edge_imu.cpp
         src/backend/edge_prior.cpp
+        src/backend/problem.cpp
 )
 
 target_link_libraries(JmVio

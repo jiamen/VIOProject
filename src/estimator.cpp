@@ -279,6 +279,7 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
 
 }
 
+
 bool Estimator::initialStructure()
 {
     TicToc t_sfm;
@@ -953,6 +954,7 @@ void Estimator::MargNewFrame()
     errprior_ = problem.GetErrPrior();
     Jprior_inv_ = problem.GetJtPrior();
 }
+
 
 void Estimator::problemSolve()
 {
